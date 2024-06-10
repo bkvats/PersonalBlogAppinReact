@@ -1,8 +1,6 @@
 import React from "react";
 
-export default function PostCard({$id, title, featuredImage}) {
-    const date = "23 May 2024";
-    title = "How to design a card using tailwind css and by looking the design from figma community";
+export default function PostCard({title, date, featuredImage = ""}) {
     return (
         <div className="my-4 flex flex-col md:flex-row-reverse px-4 py-6 w-2/3  rounded-3xl items-center justify-center bg-white">
             <div className="md:w-1/3 rounded-md overflow-hidden mx-3">

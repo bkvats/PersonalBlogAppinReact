@@ -15,7 +15,7 @@ class AuthService {
             return user;
         }
         catch (error) {
-            console.log("Appwrite sign up error:", error);
+            throw error;
         }
     }
     async logIn(email, password) {
@@ -24,8 +24,7 @@ class AuthService {
             return session;
         }
         catch (error) {
-            console.log("Appwrite login error", error);
-            return error;
+            throw error;
         }
     }
     async logOut() {
@@ -33,7 +32,6 @@ class AuthService {
             return await this.account.deleteSessions();
         }
         catch (error) {
-            console.log("Appwrite log out error", error);
             return error;
         }
     }
@@ -43,7 +41,7 @@ class AuthService {
             return user;
         }
         catch (error) {
-            console.log("Appwrite current user error", error);
+            throw error;
         }
     }
 }

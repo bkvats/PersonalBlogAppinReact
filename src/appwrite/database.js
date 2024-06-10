@@ -1,5 +1,5 @@
 import { config } from "../config/config";
-import { Client, ID, Databases, Storage, Query } from "appwrite";
+import { Client, Databases, Storage, Query } from "appwrite";
 
 class DBServies {
     client = new Client();
@@ -67,18 +67,18 @@ class DBServies {
         }
         return false;
     }
-    async uploadFile(file, slug) {
+    async uploadFile(file, imageId) {
         try {
-            return await this.storage.createFile(config.appwriteBucketId, slug, file);
+            return await this.storage.createFile(config.appwriteBucketId, imageId, file);
         }
         catch (error) {
             console.log("Appwrite uploadFile error:", error);
         }
         return false;
     }
-    async deleteFile(slug) {
+    async deleteFile(imageId) {
         try {
-            await this.storage.deleteFile(config.appwriteBucketId, slug);
+            await this.storage.deleteFile(config.appwriteBucketId, imageId);
             return true;
         }
         catch (error) {
@@ -86,8 +86,11 @@ class DBServies {
         }
         return false;
     }
-    getFilePreview(slug) {
-        return this.storage.getFilePreview(config.appwriteBucketId, slug);
+    getFilePreview(imageId) {
+        return this.storage.getFilePreview(config.appwriteBucketId, imageId);
+    }
+    async getFile(imageId) {
+        return await this.storage.getFileDownload(config.appwriteBucketId, imageId);
     }
 }
 const dbService = new DBServies();

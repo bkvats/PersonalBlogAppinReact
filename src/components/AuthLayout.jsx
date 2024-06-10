@@ -1,15 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-export default function AuthLayout({children}) {
-    const [loader, setLoader] = useState(true);
-    const authStatus = useSelector(state => state.status);
+import {setProgress} from "../store/authSlice";
+export default function AuthLayout({children, authentication = false}) {
+    const loading = useSelector(state => state.auth.loading);
+    const authStatus = useSelector(state => state.auth.status);
     const navigate = useNavigate();
+    const dispatcher = useDispatch();
+    // let getInfo = localStorage.getItem("cookieFallback");
+    // const dispatcher = useDispatch();
+    // if (getInfo) {
+    //     getInfo = JSON.parse(getInfo);
+    //     if (getInfo.a_session_664cc0bf00260dacc8ff) dispatcher(activeStatus());
+    // }
     useEffect(() => {
-        if(!authStatus){
-            navigate("/login")
+        if (!loading) {
+            if (authentication && authStatus === false) {
+                navigate("/login");
+            }
+            else if (!authentication && authStatus === true) {
+                navigate("/");
+            }
         }
-        setLoader(false);
-    }, [authStatus, navigate])
-    return loader ? <h1>Loading....</h1> : <>{children}</>
+    }, [authStatus, navigate]);
+    return loading ? null : <>{children}</>
 }
