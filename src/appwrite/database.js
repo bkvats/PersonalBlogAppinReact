@@ -12,14 +12,15 @@ class DBServies {
         this.databases = new Databases(this.client);
         this.storage = new Storage(this.client);
     }
-    async createPost({title, slug, content, featuredImage, status, userId}) {
+    async createPost(title, slug, content, status, userId, date, imgUrl) {
         try {
             return await this.databases.createDocument(config.appwriteDatabaseId, config.appwriteCollectionId, slug, {
                 title,
                 content,
-                featuredImage,
                 status,
-                userId
+                userid: userId,
+                date,
+                imgUrl
             })
         }
         catch (error) {

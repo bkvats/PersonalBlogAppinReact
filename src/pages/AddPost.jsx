@@ -1,14 +1,19 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Input } from "../components"
 import dbService from "../appwrite/database";
 import { ID } from "appwrite";
+import { useDispatch } from "react-redux";
+import { setProgress, stopLoading } from "../store/authSlice";
+import { useNavigate } from "react-router-dom";
 export default function AddPost() {
     const [title, setTitle] = useState("");
     const [slug, setSlug] = useState("");
     const [content, setContent] = useState("");
     const [uploadHidden, setUploadHidden] = useState(false);
     const [imgUrl, setImgUrl] = useState("");
-    let imageId = "";
+    const [file, setFile] = useState(null);
+    const dispatcher = useDispatch();
+    const navigate = useNavigate();
     const imageRef = useRef(null);
     function getSlug(s) {
         let ans = "";
@@ -37,7 +42,10 @@ export default function AddPost() {
                             let value = event.target.value;
                             if (value.length <= 60) {
                                 setTitle(value);
-                                setSlug(getSlug(value));
+                                let tempSlug = getSlug(value);
+                                if (tempSlug.length < 36) {
+                                    setSlug(tempSlug);
+                                }
                             }
                         }}
                         required={true}
@@ -52,37 +60,39 @@ export default function AddPost() {
                         readOnly={true}
                     />
                 </div>
-                <div className="w-[300px] h-[169px] md:w-[400px] md:h-[225px] border-2 border-gray-800 border-dashed rounded-md p-2 flex
-                items-center justify-center flex-col md:mx-4 hover:bg-white hover:cursor-pointer"
-                    onClick={() => {
-                        imageRef.current.click();
-                    }}
+                <div className="w-[300px] h-[169px] md:w-[400px] md:h-[225px] border-2 border-gray-800 border-dashed rounded-md flex
+                items-center justify-center flex-col md:mx-4 hover:bg-white hover:cursor-pointer overflow-hidden"
                 >
-                    <div hidden={uploadHidden}>
+                    <div className={`${uploadHidden ? "hidden" : "flex flex-col items-center"}`}>
                         <p className="font-light text-xl">Choose an Image</p>
-                        <form>
+                        <div>
                             <input
                                 type="file"
                                 accept="image/*"
                                 className="cursor-pointer"
                                 ref={imageRef}
                                 onChange={(event) => {
-                                    const file = event.target.files[0];
-                                    console.log(file);
+                                    let file = event.target.files[0];
+                                    setFile(file);
                                     if (!file.type.startsWith("image/")) {
                                         alert("Kindly upload an image file");
                                         imageRef.current.value = "";
                                     }
                                     else {
-                                        imageId = ID.unique();
-                                        console.log("intialising image upload..", imageId);
-                                        dbService.uploadFile(file, imageId).then((value) => {
-                                            console.log("upload succesfull....");
-                                            console.log(value);
-                                            let ans = dbService.getFilePreview(imageId);
-                                            console.log(ans);
-                                            setImgUrl(ans);
-                                        })
+                                        // imageId = ID.unique();
+                                        // console.log("intialising image upload..", imageId);
+                                        // dbService.uploadFile(file, imageId).then((value) => {
+                                        //     console.log("upload succesfull....");
+                                        //     console.log(value);
+                                        //     dbService.getFile(imageId).then((value) => {
+                                        //         console.log(value);
+                                        //         console.log(value.href);
+                                        //         setImgUrl(value.href);
+                                        //         setUploadHidden(true);
+                                        //     });
+                                        // })
+                                        setImgUrl(URL.createObjectURL(file));
+                                        setUploadHidden(true);
                                     }
                                 }}
                                 hidden
@@ -94,23 +104,44 @@ export default function AddPost() {
                                     imageRef.current.click();
                                 }}
                             >➕</button>
-                            {/* <button
-                            type="reset"
-                            className="text-white rounded-full font-light p-1 bg-opacity-30 my-3 hover:bg-opacity-30 hover:bg-gray-800">
-                            ✖
-                            </button> */}
-                        </form>
+                        </div>
                     </div>
-
+                    <div className={`${uploadHidden ? "grid" : "hidden"}`}>
+                        <img src={imgUrl} className="w-[300px] h-[169px] md:w-[400px] md:h-[225px] object-cover object-center row-start-1 col-start-1" alt="can't display the image"/>
+                        <div className="deleteDiv w-[300px] h-[169px] md:w-[400px] md:h-[225px] row-start-1 col-start-1 hover:bg-black hover:bg-opacity-50 flex justify-end items-start">
+                            <button
+                            className="row-start-1 col-start-1 m-1 hover:bg-white rounded-full p-2"
+                            onClick={() => {
+                                setImgUrl("");
+                                setUploadHidden(false);
+                                imageRef.current.value = "";
+                            }}
+                            ><img src="src/pages/images/delete-icon.svg" alt="delete" width={20}/></button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="w-5/6">
-                <textarea placeholder="You can use html tags like <i>, <u> and <b> for formatting the content..." className="w-full my-2 text-2xl p-2 rounded-md outline-none font-light shadow resize-none" rows={10} value={content} onChange={(event) => setContent(event.target.value)}>
+                <textarea placeholder="You can use html tags like <i>, <u>, <b> and <br> for formatting the content..." className="w-full my-2 text-2xl p-2 rounded-md outline-none font-light shadow resize-none" rows={10} value={content} onChange={(event) => setContent(event.target.value)}>
                 </textarea>
-                <Button title={"Post"} className="self-start mb-12" />
-            </div>
-            <div>
-                <img src={imgUrl} alt="image can't be shown" />
+                <button
+                className="bg-gray-800 text-white text-2xl px-4 py-2 rounded-lg font-light hover:bg-opacity-85 my-2 mb-14"
+                onClick={() => {
+                    console.log("in post..");
+                    dispatcher(setProgress(10));
+                    dbService.uploadFile(file, ID.unique()).then((value) => {
+                        dispatcher(setProgress(30));
+                        dbService.getFile(value.$id).then((value) => {
+                            dispatcher(setProgress(70));
+                            dbService.createPost(title, slug, content, "active", "6658c8f80019dd21d8d0", new Date().toLocaleDateString("en-GB"), value.href).then((value) => {
+                                dispatcher(stopLoading());
+                                console.log(value);
+                                navigate("/");
+                            })
+                        })
+                    })
+                }}
+                >Post</button>
             </div>
         </div >
     )
