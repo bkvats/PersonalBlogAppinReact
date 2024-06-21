@@ -44,6 +44,10 @@ class AuthService {
             throw error;
         }
     }
+    async isAuthor() {
+        let result = await this.getCurrentUser();
+        return result.$id === config.appwriteAuthorId
+    }
 }
 const authService = new AuthService();
 export default authService;

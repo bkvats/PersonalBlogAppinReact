@@ -12,7 +12,7 @@ class DBServies {
         this.databases = new Databases(this.client);
         this.storage = new Storage(this.client);
     }
-    async createPost(title, slug, content, status, userId, date, imgUrl) {
+    async createPost(title, slug, content, status, userId, date, imageId) {
         try {
             return await this.databases.createDocument(config.appwriteDatabaseId, config.appwriteCollectionId, slug, {
                 title,
@@ -20,20 +20,21 @@ class DBServies {
                 status,
                 userid: userId,
                 date,
-                imgUrl
+                imageId
             })
         }
         catch (error) {
             console.log("Appwrite createPost error", error);
         }
     }
-    async updatePost(slug, {title, content, featuredImage, status, userId}) {
+    async updatePost(title, slug, content, status, imageId) {
         try {
+            console.log("updating data post..");
             return await this.databases.updateDocument(config.appwriteDatabaseId, config.appwriteCollectionId, slug, {
                 title,
                 content,
-                featuredImage,
-                status
+                status,
+                imageId
             })
         }
         catch (error) {

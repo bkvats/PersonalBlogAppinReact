@@ -10,7 +10,6 @@ import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } 
 import AuthLayout from './components/AuthLayout.jsx'
 import Login from './components/Login.jsx'
 import Singup from './components/Singup.jsx'
-import AllPosts from './pages/AllPosts.jsx'
 import ViewPost from './pages/ViewPost.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -29,14 +28,10 @@ const router = createBrowserRouter(
         <AuthLayout>
           <Singup />
         </AuthLayout>} />
-      <Route path='/addpost' element={
+      <Route path='/addpost/:id' element={
         <AuthLayout authentication={true}>
           <AddPost />
         </AuthLayout>} />
-      <Route path='/allposts' element={
-        <AuthLayout authentication={true}>
-        <AllPosts />
-      </AuthLayout>} />
       </Route>
   )
 )
