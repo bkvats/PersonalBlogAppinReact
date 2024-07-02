@@ -37,7 +37,7 @@ export default function Singup() {
     }
     return (
         <>
-        {error && <p className="text-red-500 self-center mt-20 mx-1 text-center absolute">{error}</p>}
+        {error && <p className="text-red-500 self-center mt-12 mx-1 text-center">{error}</p>}
         <form className="w-4/5 flex flex-col items-center justify-center my-20 shadow rounded-lg p-8 bg-white md:w-auto" onSubmit={handleSignup}>
             <Input 
             type = "text"

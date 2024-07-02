@@ -32,10 +32,8 @@ export default function ViewPost() {
                 setImgUrl(value.href);
             })
         })
-        authService.getCurrentUser().then((value) => {
-            if (authService.isAuthor()) {
-                setIsAuthor(true);
-            }
+        authService.isAuthor().then((value) => {
+            setIsAuthor(value);
         })
     }, [slug]);
     return (
