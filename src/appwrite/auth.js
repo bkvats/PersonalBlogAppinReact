@@ -41,7 +41,7 @@ class AuthService {
             return user;
         }
         catch (error) {
-            throw error;
+            console.log("No currenct user found");
         }
     }
     async isAuthor() {

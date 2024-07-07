@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 
 export default function Home() {
-    console.log("in the home component..");
     const blogs = useSelector(state => state.blog.blogs);
     return blogs ? <div className="w-full min-h-[88vh]">
         {

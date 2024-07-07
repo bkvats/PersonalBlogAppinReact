@@ -7,15 +7,16 @@ export default function Header() {
     const authStatus = useSelector(state => state.auth.status);
     const navigate = useNavigate();
     const loading = useSelector(state => state.auth.loading);
-    const userData = useSelector(state => state.auth.userData);
     const [isAuthor, setIsAuthor] = useState(false);
 
     
     useEffect(() => {
+        console.log("in header useeffect");
         authService.isAuthor().then((value) => {
+            console.log(value);
             setIsAuthor(value);
         })
-    }, [])
+    }, [authStatus])
     return (
         <header className="flex h-10 justify-between items-center px-6 md:px-24 shadow-md py-6 sticky top-0 w-full bg-white">
             <div className="text-xl">
