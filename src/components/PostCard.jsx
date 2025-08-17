@@ -1,10 +1,13 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import dbService from "../appwrite/database";
 import CreateImage from "./CreateImage";
 import PreviewImage from "./PreviewImage";
 
 export default function PostCard({ title, date, imageId = "" }) {
-    let imgUrl = dbService.getFilePreview(imageId).href;
+    const [imgUrl, setImgUrl] = useState("");
+    useEffect(() => {
+        dbService.getFile(imageId).then(value => setImgUrl(value.href));
+    }, []);
     return (
         <div className="my-4 flex flex-col md:flex-row-reverse px-4 py-6 w-full  rounded-3xl items-center justify-center bg-white hover:shadow-lg">
             <div className="w-[250px] h-[141px] md:w-[400px] md:h-[225px] rounded-md overflow-hidden">
