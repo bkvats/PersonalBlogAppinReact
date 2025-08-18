@@ -85,7 +85,7 @@ export default function ViewPost() {
                                     {
                                         i.imageId ? <img
                                             className="w-[250px] h-[141px] md:w-[400px] md:h-[225px] object-center object-cover"
-                                            src={`${dbService.getFile(i.imageId).then(value => value.href)}</img>}`} alt={i.title} /> :
+                                            src={`${dbService.getFile(i.imageId).then(value => value.href)}`} alt={i.title} /> :
                                             <PreviewImage title={i.title} />
                                     }
                                 </div>
